@@ -379,9 +379,9 @@ struct Sym {
 };
 
 struct StkSlot {
-	int size;
-	int align;
-	int offset;
+	int   size;
+	int   align;
+	char *name;
 };
 
 #define MAXTOKSZ 4096
