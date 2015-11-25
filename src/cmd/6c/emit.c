@@ -189,6 +189,7 @@ prologue(Node *f, char *label)
 	char    *v;
 
 	out("function w $%s() {\n", label);
+	out("@start\n");
 	for(i = 0; i < f->Func.stkslots->len; i++) {
 		s = vecget(f->Func.stkslots, i);
 		s->name = newv();
@@ -202,8 +203,8 @@ func(Node *f, char *label, int isglobal)
 	vcounter = 0;
 	prologue(f, label);
 	block(f->Func.body);
-	out(" @end\n");
-	outi("ret\n");
+	out("@end\n");
+	outi("ret 0\n");
 	out("}\n");
 }
 

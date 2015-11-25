@@ -4,7 +4,8 @@ set -e
 
 for T in test/execute/*.c test/cpp/*.c test/bugs/*.c
 do
-	if ! ( bin/6c $T > $T.s &&
+	if ! ( bin/6c $T > $T.ir &&
+           lisc $T.ir > $T.s &&
            gcc -c $T.s -o $T.o &&
            gcc $T.o -o $T.bin && 
            $T.bin > /dev/null )
