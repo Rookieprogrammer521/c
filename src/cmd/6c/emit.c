@@ -10,7 +10,6 @@ static FILE *o;
 static Vec *pendingdata;
 static int vcounter;
 
-
 void
 emitinit(FILE *out)
 {
@@ -34,7 +33,7 @@ penddata(char *label, CTy *ty, Node *init, int isglobal)
 char *
 newv()
 {
-	return gcprintf("%%v%d", vcounter);
+	return gcprintf("%%v%d", vcounter++);
 }
 
 static void
@@ -313,8 +312,14 @@ obinop(int op, CTy *t, char *l, char *r)
 	case '-':
 		outi("%s =%s sub %s, %s\n", v, tpfx, l, r);
 		break;
+	case '*':
+		outi("%s =%s mul %s, %s\n", v, tpfx, l, r);
+		break;
 	case '%':
 		outi("%s =%s rem %s, %s\n", v, tpfx, l, r);
+		break;
+	case '/':
+		outi("%s =%s div %s, %s\n", v, tpfx, l, r);
 		break;
 	case '<':
 		outi("%s =%s cslt %s, %s\n", v, tpfx, l, r);
