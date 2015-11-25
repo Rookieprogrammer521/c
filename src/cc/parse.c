@@ -85,12 +85,12 @@ newlabel(void)
 	char *s;
 	int   n;
 
-	n = snprintf(0, 0, ".L%d", labelcount);
+	n = snprintf(0, 0, "L%d", labelcount);
 	if(n < 0)
 		panic("internal error");
 	n += 1;
 	s = gcmalloc(n);
-	if(snprintf(s, n, ".L%d", labelcount) < 0)
+	if(snprintf(s, n, "L%d", labelcount) < 0)
 		panic("internal error");
 	labelcount++;
 	return s;

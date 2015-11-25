@@ -34,18 +34,7 @@ penddata(char *label, CTy *ty, Node *init, int isglobal)
 char *
 newv()
 {
-	int   n;
-	char *v;
-
-	n = snprintf(0, 0, "%%v%d", vcounter);
-	if(n < 0)
-		panic("internal error");
-	n++;
-	v = gcmalloc(n);
-	if(snprintf(v, n, "%%v%d", vcounter) < 0)
-		panic("internal error");
-	vcounter += 1;
-	return v;
+	return gcprintf("%%v%d", vcounter);
 }
 
 static void
@@ -111,10 +100,10 @@ load(CTy *t, char *p)
 		v = newv();
 		switch(t->size) {
 		case 8:
-			outi("%s =l load %s\n", v, p);
+			outi("%s =l loadl %s\n", v, p);
 			return v;
 		case 4:
-			outi("%s =w load %s\n", v, p);
+			outi("%s =w loadw %s\n", v, p);
 			return v;
 		case 2:
 		case 1:
@@ -134,7 +123,8 @@ addr(Node *n)
 	case NIDENT:
 		sym = n->Ident.sym;
 		switch(sym->k) {
-			break;
+		case SYMGLOBAL:
+			return gcprintf("$%s", sym->Global.label);
 		case SYMLOCAL:
 			return sym->Local.slot->name;
 		default:
@@ -186,7 +176,6 @@ prologue(Node *f, char *label)
 {
 	int     i;
 	StkSlot *s;
-	char    *v;
 
 	out("function w $%s() {\n", label);
 	out("@start\n");
@@ -411,7 +400,23 @@ stmt(Node *n)
 static void
 data(Data *d)
 {
-	panic("unimplemented");
+	char *irty;
+
+	if(isitype(d->type)) {
+		switch(d->type->size) {
+		case 8:
+			irty = "w";
+			break;
+		case 4:
+			irty = "l";
+			break;
+		default:
+			panic("unimplemented int data");
+		}
+		out("data $%s = { %s 0 }\n", d->label, irty);
+		return;
+	}
+	panic("unimplemented data");
 }
 
 void

@@ -13,6 +13,27 @@ gcstrdup(char *s)
 	return r;
 }
 
+char *gcprintf(char *fmt, ...)
+{
+	va_list va;
+	int     n;
+	char   *v;
+
+	va_start(va, fmt);
+	n = vsnprintf(0, 0, fmt, va);
+	va_end(va);
+	if(n < 0)
+		panic("gcprintf internal error");
+	n += 1;
+	v = gcmalloc(n);
+	va_start(va, fmt);
+	n = vsnprintf(v, n, fmt, va);
+	va_end(va);
+	if(n < 0)
+		panic("gcprintf internal error");
+	return v;
+}
+
 void *
 gcmalloc(int n)
 {
